@@ -9,7 +9,7 @@ import com.miniproject.miniprojectapi.repository.CategoryRepository;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-	@Autowired
+    @Autowired
     private CategoryRepository categoryRepository;
 
     @Override

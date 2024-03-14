@@ -7,7 +7,7 @@ import com.miniproject.miniprojectapi.model.Product;
 
 
 public interface ProductService {
-	List<Product> getAllProducts();
+    List<Product> getAllProducts();
     List<Product> getProductsByCategoryId(Long category_id);
     Product addProduct(Product product);
     Product updateProduct(Long id, Product product);

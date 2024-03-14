@@ -9,5 +9,5 @@ public interface CategoryService {
 	Category addCategory(Category category);
 	Category getCategoryById(Long categoryId);
 	Category updateCategory(Long id, Category category); 
-    boolean deleteCategory(Long id);
+        boolean deleteCategory(Long id);
 }

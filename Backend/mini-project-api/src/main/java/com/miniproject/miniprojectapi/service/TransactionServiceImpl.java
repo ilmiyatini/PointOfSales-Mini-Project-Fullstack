@@ -11,14 +11,14 @@ import com.miniproject.miniprojectapi.repository.TransactionRepository;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-	@Autowired
+    @Autowired
     private TransactionRepository transactionRepository;
 	
-	@Override
+    @Override
     public Transaction addTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
-	@Override
+    @Override
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll(); 
     }
