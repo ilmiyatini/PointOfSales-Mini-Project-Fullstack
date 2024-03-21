@@ -1,5 +1,6 @@
 package com.miniproject.miniprojectapi.service;
 
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -7,9 +8,7 @@ import org.springframework.stereotype.Service;
 import com.miniproject.miniprojectapi.model.Product;
 import com.miniproject.miniprojectapi.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Pageable;
+
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -23,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategoryId(Long category_id) {
+    public List<Product> getProductsByCategoryId(Integer category_id) {
         return productRepository.findByCategory_Id(category_id);
     }
 
@@ -38,14 +37,20 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(sort);
     }
     @Override
-    public List<Product> searchProductsByTitle(String title, String sortBy, String sortOrder) {
-        Sort.Direction direction = Sort.Direction.ASC;
-        if (sortOrder.equalsIgnoreCase("desc")) {
-            direction = Sort.Direction.DESC;
-        }
-        
-        Sort sort = Sort.by(direction, sortBy);
-        return productRepository.findByTitle(title, sort);
+    public List<Product> searchProductsByTitle(String title, String sortBy) {
+    	 Sort.Direction direction = Sort.Direction.ASC;
+    	    if (sortBy.equals("desc")) {
+    	        direction = Sort.Direction.DESC;
+    	    }
+
+    	    
+    	    String[] validColumns = {"title", "price"}; 
+    	    if (!Arrays.asList(validColumns).contains(sortBy)) {
+    	        sortBy = "title"; 
+    	    }
+
+    	    Sort sort = Sort.by(direction, sortBy);
+    	    return productRepository.findByTitleContainingIgnoreCaseOrderByTitle(title, sort);
     }
     
     @Override
@@ -54,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Long id, Product product) {
+    public Product updateProduct(Integer id, Product product) {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
         existingProduct.setTitle(product.getTitle());
@@ -65,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean deleteProduct(Long id) {
+    public boolean deleteProduct(Integer id) {
     	if (productRepository.existsById(id)) {
             productRepository.deleteById(id);
             return true;
@@ -75,19 +80,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductById(Long id) {
+    public Product getProductById(Integer id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
     }
-    
-//    @Override
-//	public Page<Product> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
-//		 Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
-//		 Sort.by(sortField).descending();
-//		 
-//		 Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-//		 return this.productRepository.findAll(pageable);
-//		}
+    @Override
+    public List<Product> getProductsByTitleAndCategoryId(String title, Integer categoryId, String sortBy) {
+        return productRepository.findByTitleContainingAndCategory_IdOrderByTitle(title, categoryId, Sort.by(sortBy));
+    }
 	
 
 }

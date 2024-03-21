@@ -13,20 +13,20 @@ import jakarta.persistence.Table;
 public class TransactionDetail {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @ManyToOne(targetEntity = Transaction.class)
     @JoinColumn(name = "transaction_id")
     private Transaction transaction;
     @ManyToOne(targetEntity = Product.class)
     @JoinColumn(name = "product_id")
     private Product product;
-    private Long quantity;
-    private Long subtotal;
+    private Integer quantity;
+    private Integer subtotal;
     
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public Transaction getTransaction() {
@@ -41,16 +41,16 @@ public class TransactionDetail {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-	public Long getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(Long quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	public Long getSubtotal() {
+	public Integer getSubtotal() {
 		return subtotal;
 	}
-	public void setSubtotal(Long subtotal) {
+	public void setSubtotal(Integer subtotal) {
 		this.subtotal = subtotal;
 	}
     

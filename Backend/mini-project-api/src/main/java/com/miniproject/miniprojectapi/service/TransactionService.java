@@ -7,5 +7,6 @@ import com.miniproject.miniprojectapi.model.Transaction;
 public interface TransactionService {
     Transaction addTransaction(Transaction transaction);
     List<Transaction> getAllTransactions();
-    Transaction getTransactionById(Long id);
+    Transaction getTransactionById(Integer id);
+    Transaction getTransactionDetailById(Integer id);
 }

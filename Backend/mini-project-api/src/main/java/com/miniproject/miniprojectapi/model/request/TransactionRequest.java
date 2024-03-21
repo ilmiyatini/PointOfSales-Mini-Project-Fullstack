@@ -3,20 +3,21 @@ package com.miniproject.miniprojectapi.model.request;
 import java.util.List;
 
 public class TransactionRequest {
-	private Long total_amount;
-    private Long total_pay;
+	private Integer total_amount;
+    private Integer total_pay;
+    
     private List<TransactionRequestDetail> transaction_details;
     
-	public Long getTotal_amount() {
+	public Integer getTotal_amount() {
 		return total_amount;
 	}
-	public void setTotal_amount(Long total_amount) {
+	public void setTotal_amount(Integer total_amount) {
 		this.total_amount = total_amount;
 	}
-	public Long getTotal_pay() {
+	public Integer getTotal_pay() {
 		return total_pay;
 	}
-	public void setTotal_pay(Long total_pay) {
+	public void setTotal_pay(Integer total_pay) {
 		this.total_pay = total_pay;
 	}
 	public List<TransactionRequestDetail> getTransaction_details() {

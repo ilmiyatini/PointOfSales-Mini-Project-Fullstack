@@ -1,17 +1,22 @@
 package com.miniproject.miniprojectapi.controller;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.miniproject.miniprojectapi.service.ProductService;
 import com.miniproject.miniprojectapi.service.TransactionService;
 import com.miniproject.miniprojectapi.model.Transaction;
@@ -19,9 +24,12 @@ import com.miniproject.miniprojectapi.model.TransactionDetail;
 import com.miniproject.miniprojectapi.model.request.TransactionRequestDetail;
 import com.miniproject.miniprojectapi.model.request.TransactionRequest;
 import com.miniproject.miniprojectapi.model.response.HttpResponseModel;
+import com.miniproject.miniprojectapi.model.response.TransactionDetailResponse;
+import com.miniproject.miniprojectapi.model.response.TransactionResponse;
 
 @RestController
 @RequestMapping("/pos/api")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TransactionController {
 
     @Autowired
@@ -38,9 +46,12 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
+    
+    
+    
+        
     @GetMapping("/transaction/{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable("id") Long id) {
+    public ResponseEntity<Transaction> getTransactionById(@PathVariable("id") Integer id) {
         Transaction transaction = transactionService.getTransactionById(id);
         if (transaction != null) {
             return ResponseEntity.ok(transaction);
@@ -49,11 +60,37 @@ public class TransactionController {
         }
     }
 
+
+    @GetMapping("/transactiondetail/{id}")
+    public ResponseEntity<TransactionResponse> getTransactionDetailById(@PathVariable("id") Integer id) {
+        Transaction transaction = transactionService.getTransactionById(id);
+        if (transaction != null) {
+            List<TransactionDetailResponse> transactionDetailsResponse = new ArrayList<>();
+            for (TransactionDetail detail : transaction.getTransactionDetails()) {
+                TransactionDetailResponse detailResponse = new TransactionDetailResponse(
+                    detail.getProduct().getId(),
+                    detail.getQuantity(),
+                    detail.getSubtotal()
+                );
+                transactionDetailsResponse.add(detailResponse);
+            }
+
+            TransactionResponse response = new TransactionResponse(transactionDetailsResponse);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
     @PostMapping("/addtransaction")
     public ResponseEntity<HttpResponseModel> addTransaction(@RequestBody TransactionRequest transactionRequest) {
         Transaction transaction = new Transaction();
+        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime zonedDateTime = now.atZone(ZoneId.of("UTC"));
+        LocalDateTime adjustedTime = zonedDateTime.toLocalDateTime();
         
-        transaction.setTransactionDate(LocalDate.now());
+        transaction.setTransactionDate(adjustedTime);
         transaction.setTotalAmount(transactionRequest.getTotal_amount());
         transaction.setTotalPay(transactionRequest.getTotal_pay());
         

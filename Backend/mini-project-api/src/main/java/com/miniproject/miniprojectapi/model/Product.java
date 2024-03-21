@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class Product {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     
 	@ManyToOne(targetEntity = Category.class)
     @JoinColumn(name = "category_id")
@@ -22,10 +22,10 @@ public class Product {
     private String image;
     private Integer price;
     
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public Category getCategory() {

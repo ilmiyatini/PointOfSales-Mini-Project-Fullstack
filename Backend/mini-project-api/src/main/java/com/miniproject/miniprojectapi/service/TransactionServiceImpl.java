@@ -24,7 +24,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction getTransactionById(Long id) {
+    public Transaction getTransactionById(Integer id) {
+        Optional<Transaction> transactionOptional = transactionRepository.findById(id);
+        return transactionOptional.orElse(null);
+    }
+    @Override
+    public Transaction getTransactionDetailById(Integer id) {
         Optional<Transaction> transactionOptional = transactionRepository.findById(id);
         return transactionOptional.orElse(null);
     }

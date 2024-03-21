@@ -22,12 +22,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
     
     @Override
-    public Category getCategoryById(Long categoryId) {
+    public Category getCategoryById(Integer categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         return categoryOptional.orElse(null);
     }
     @Override
-    public Category updateCategory(Long id, Category category) {
+    public Category updateCategory(Integer id, Category category) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isPresent()) {
             Category existingCategory = optionalCategory.get();
@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean deleteCategory(Long id) {
+    public boolean deleteCategory(Integer id) {
         if (categoryRepository.existsById(id)) {
             categoryRepository.deleteById(id);
             return true;

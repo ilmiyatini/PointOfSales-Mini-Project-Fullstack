@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.miniproject.miniprojectapi.model.TransactionDetail;
 
 @Repository
-public interface TransactionDetailRepository extends JpaRepository<TransactionDetail, Long> {
+public interface TransactionDetailRepository extends JpaRepository<TransactionDetail, Integer> {
 }

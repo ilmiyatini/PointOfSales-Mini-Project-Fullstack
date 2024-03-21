@@ -1,6 +1,7 @@
 package com.miniproject.miniprojectapi.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import com.miniproject.miniprojectapi.service.ProductService;
 
 @RestController
 @RequestMapping("/pos/api")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
 
     @Autowired
@@ -27,16 +29,19 @@ public class ProductController {
 
     @GetMapping("/listproduct")
     public ResponseEntity<List<ProductResponse>> listProducts(
-            @RequestParam(required = false) Long category_id,
+            @RequestParam(required = false) Integer category_id,
             @RequestParam(required = false) String title,
             @RequestParam(defaultValue = "title") String sort_by,
             @RequestParam(defaultValue = "asc") String sort_order
     ) {
-        if (category_id != null) {
+    	if (category_id != null && title != null && !title.isEmpty()) {
+            List<Product> products = productService.getProductsByTitleAndCategoryId(title, category_id, sort_by);
+            return new ResponseEntity<>(convertToProductResponseList(products), HttpStatus.OK);
+        } else if (category_id != null) {
             List<Product> products = productService.getProductsByCategoryId(category_id);
             return new ResponseEntity<>(convertToProductResponseList(products), HttpStatus.OK);
-        } else if (title != null) {
-            List<Product> products = productService.searchProductsByTitle(title, sort_by, sort_order);
+        } else if (title != null && !title.isEmpty()) {
+            List<Product> products = productService.searchProductsByTitle(title, sort_by);
             return new ResponseEntity<>(convertToProductResponseList(products), HttpStatus.OK);
         } else {
             List<Product> products = productService.getAllProductsSorted(sort_by, sort_order);
@@ -44,7 +49,12 @@ public class ProductController {
         }
     }
 
+    
     private List<ProductResponse> convertToProductResponseList(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return Collections.emptyList(); 
+        }
+
         List<ProductResponse> responseList = new ArrayList<>();
         for (Product product : products) {
             ProductResponse productResponse = new ProductResponse();
@@ -57,6 +67,11 @@ public class ProductController {
         }
         return responseList;
     }
+    @GetMapping("/listproductall")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> product = productService.getAllProducts();
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<HttpResponseModel> addProduct(@RequestBody ProductRequest productRequest) {
@@ -66,7 +81,7 @@ public class ProductController {
         product.setImage(productRequest.getImage());
         product.setPrice(productRequest.getPrice());
         
-        Long categoryId = productRequest.getCategory_id();
+        Integer categoryId = productRequest.getCategory_id();
         Category category = categoryService.getCategoryById(categoryId);
         product.setCategory(category);
         productService.addProduct(product);
@@ -76,14 +91,14 @@ public class ProductController {
     }
 
     @PutMapping("/updateproduct/{id}")
-    public ResponseEntity<HttpResponseModel> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<HttpResponseModel> updateProduct(@PathVariable Integer id, @RequestBody ProductRequest productRequest) {
         Product product = new Product();
         product.setId(id);
         product.setTitle(productRequest.getTitle());
         product.setImage(productRequest.getImage());
         product.setPrice(productRequest.getPrice());
         
-        Long categoryId = productRequest.getCategory_id();
+        Integer categoryId = productRequest.getCategory_id();
         Category category = categoryService.getCategoryById(categoryId);
         product.setCategory(category);
         
@@ -98,7 +113,7 @@ public class ProductController {
     }
 
     @DeleteMapping("deleteproduct/{id}")
-    public ResponseEntity<HttpResponseModel> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<HttpResponseModel> deleteProduct(@PathVariable Integer id) {
     	boolean deleted = productService.deleteProduct(id);
         if (deleted) {
             HttpResponseModel resp = new HttpResponseModel("ok", "success");
@@ -111,7 +126,7 @@ public class ProductController {
 
 
     @GetMapping("/detailproduct/{id}")
-    public ResponseEntity<Map<String, Object>> getProductDetail(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getProductDetail(@PathVariable Integer id) {
         Product product = productService.getProductById(id);
         if (product != null) {
             Map<String, Object> response = new LinkedHashMap<>();
