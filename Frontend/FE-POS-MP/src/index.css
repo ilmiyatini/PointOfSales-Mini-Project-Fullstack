@@ -4,7 +4,7 @@
 
 @layer components {
   .tool {
-    @apply flex flex-col mx-2 text-[10px] rounded-md md:text-xs my-2 p-2 lg:mx-4 items-center text-white hover:bg-teal-200 cursor-pointer transition duration-150;
+    @apply flex flex-col  text-sm rounded-md md:text-xs my-2 p-2 w-full items-center text-white hover:bg-teal-200 cursor-pointer transition duration-150;
   }
 
   .side-bar {
